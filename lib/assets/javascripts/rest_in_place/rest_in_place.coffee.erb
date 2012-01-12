@@ -21,7 +21,10 @@ class RestInPlaceEditor
     @activateForm()
   
   # Restore the element to its default state
-  abort : ->
+  abort: (msg) ->
+
+    $.flash.error(msg) if msg?
+
     @$element
       .html(@oldValue)
       .removeClass('rip-active')
@@ -46,10 +49,20 @@ class RestInPlaceEditor
       if (jqXHR.status == 200 && textStatus == "parsererror")
         @loadViaGET()
       else
-        @abort()
+        msg = @errorMessage(jqXHR.responseText)
+        @abort(msg)
         
     @$element.html("saving...")
   
+  errorMessage: (json) ->
+    data = $.parseJSON(json)
+    data = data[@objectName] if @include_root_in_json
+    errors = data['errors']
+    # array of two dimensional arrays
+    $.map(errors, (array) ->
+      array[1]
+    ).join(" ")
+
   loadViaGET : ->
     showRequest = @ajax()
     showRequest.done (data) => @loadSuccessCallback(data)
