@@ -19,7 +19,9 @@ class RestInPlaceEditor
     @$element.addClass('rip-active')
     @$element.unbind('click', @clickHandler)
     @activateForm()
-  
+
+    @$element.trigger('rest-in-place.activate')
+
   # Restore the element to its default state
   abort: (msg) ->
 
@@ -29,7 +31,8 @@ class RestInPlaceEditor
       .html(@oldValue)
       .removeClass('rip-active')
       .click(@clickHandler)
-  
+      .trigger('rest-in-place.abort')
+
   # Take the changes a user has made and send them to the server.
   # If the server accepted the request but does not send back a
   # parseable answer, a second request is initiated to retrieve the updated
@@ -160,8 +163,9 @@ class RestInPlaceEditor
   loadSuccessCallback : (data) ->
     @$element.html(@extractAttributeFromData(data))
     @$element.click(@clickHandler)
-    @$element.removeClass('rip-active')
-  
+             .removeClass('rip-active')
+             .trigger('rest-in-place.success')
+
   # Creates a clickhandler for the current instance of RestInPlaceEditor, that
   # has its this pointer permanently bound to the editor instance.
   createClickHandler : ->
