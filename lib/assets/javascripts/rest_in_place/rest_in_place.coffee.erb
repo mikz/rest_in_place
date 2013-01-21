@@ -63,7 +63,7 @@ class RestInPlaceEditor
     errors = data['errors']
     # array of two dimensional arrays
     $.map(errors, (array) ->
-      array[1]
+      array[0]
     ).join(" ")
 
   loadViaGET : ->
